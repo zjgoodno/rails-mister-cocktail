@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
-# root to: "cocktails#home"
+root to: "cocktails#index"
 
 # get "cocktails/:id", to: 'cocktails#show', as: :show
 
@@ -8,7 +8,7 @@ Rails.application.routes.draw do
 
 # post "cocktails/:id", to: 'cocktails#create', as: :create
 
-  resources :cocktails, only: [ :index, :show, :new, :create] do
+  resources :cocktails, only: [:show, :new, :create] do
     resources :doses, only: [ :new, :create]
   end
 

@@ -6,15 +6,27 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
+  Dose.destroy_all
+  Ingredient.destroy_all
+  Cocktail.destroy_all
 
-Cocktail.destroy_all if Rails.env.development?
 
+require 'open-uri'
 
+url = "https://raw.githubusercontent.com/maltyeva/iba-cocktails/master/recipes.json"
 
+opened_url = open(url).read
+parsed_url = JSON.parse(opened_url)
 
-Ingredient.create(name: "lemon" )
-Ingredient.create(name: "ice" )
-Ingredient.create(name: "mint leaves" )
-Ingredient.create(name: "run" )
-Ingredient.create(name: "whiskey" )
-Ingredient.create(name: "vodka" )
+parsed_url.each do |cocktail|
+  c = Cocktail.create!(name: cocktail["name"])
+  cocktail["ingredients"].each do |ingredient|
+    if ingredient["ingredient"]
+      i = Ingredient.find_or_create_by(name: ingredient["ingredient"])
+      d = Dose.create(description: ingredient["amount"].to_s + " " + ingredient["unit"], cocktail: c, ingredient: i)
+      puts "Added #{d.description} of #{i.name} to #{c.name}"
+    end
+
+  end
+end
+
